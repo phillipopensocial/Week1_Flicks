@@ -8,17 +8,17 @@
 
 import UIKit
 import AFNetworking
+import MBProgressHUD
 
 
 class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
 
     
-    @IBOutlet weak var searchTextField: UITextField!
-    
-    @IBOutlet weak var searchCancelButton: UIButton!
-    
+   
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var theUpdateLabel: UILabel!
+    @IBOutlet weak var theNetworkMsgView: UIView!
     
     var theMovies: NSArray?
 
@@ -26,32 +26,56 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
+        //Hide the Network message view
+        self.theNetworkMsgView.isHidden = true
+
+        
+        //Setup Refresh Control
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshControlAction(refreshControl:)), for: UIControlEvents.valueChanged)
+        // add refresh control to table view
+        self.tableView.insertSubview(refreshControl, at: 0)
+
+        
+        //Setup Table
         tableView.dataSource = self
         tableView.delegate = self
         //tableView.estimatedRowHeight = 100
         //tableView.rowHeight = UITableViewAutomaticDimension
 
         
-        retrieveData()
+        retrieveData(refreshControl:nil)
     }
 
-    func retrieveData() {
+    func retrieveData(refreshControl : UIRefreshControl?) {
+        
+        print ("\nRetrieveData: Begin")
         
         //Making a call to MovieDB
         
         // Configuration:     'https://api.themoviedb.org/3/configuration?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed'
         
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let offset = 0
-        let url = URL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        //let offset = 0
+        let url = URL(string:"https://api.themoviedb.org/3/movie/popular?api_key=\(apiKey)&page=1")
         //let url = URL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&offset=\(offset)")
         let request = URLRequest(url: url!)
+        let sessionConfig = URLSessionConfiguration.default
+        sessionConfig.timeoutIntervalForRequest = 1.0;
         let session = URLSession(
-            configuration: URLSessionConfiguration.default,
+            configuration: sessionConfig,
             delegate:nil,
             delegateQueue:OperationQueue.main
         )
+
         
+        
+        //Show the HUD
+        let progressHUD = MBProgressHUD.showAdded(to: self.view, animated: true)
+        progressHUD.label.text = "Loading..."
+        
+        
+        //Start the Async fetching
         let task : URLSessionDataTask = session.dataTask(with: request,completionHandler: { (dataOrNil, response, error) in
             if let data = dataOrNil {
                 if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
@@ -61,7 +85,7 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     self.theMovies = responseDictionary.value( forKeyPath: "results") as? NSArray
                     
                     print(url)
-                    print("\n\nFound Reponse data from API!")
+                    print("\n\nRetrieveData: Found Reponse data from API!")
                      for aMovie in  self.theMovies!{
                      let aMovieDetail = aMovie as! NSDictionary
                      print("Movie: \(aMovieDetail["title"])")
@@ -72,25 +96,52 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     //reload the table
                     self.tableView.reloadData()
                     
+                    //Update the timestamp
+                    let now = Date()
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                    formatter.timeZone = TimeZone(secondsFromGMT: 0)
+                    self.theUpdateLabel.text = "Update: " + formatter.string(from: now)
+
+                    
+                    //Stop Refresh Control
+                    if( refreshControl != nil ) {
+                        refreshControl?.endRefreshing()
+                    }
+                
+                    //Delay
+                    sleep(1)
+                    progressHUD.hide(animated: true)
                 }
                 
                 
+            }else{
                 
+                //Notify of error
+                print("\nsleep started")
+                progressHUD.hide(animated: true)
+                self.theNetworkMsgView.setNeedsFocusUpdate()
+                sleep(3)
+                print("\nsleep ended")
+                self.theNetworkMsgView.alpha = 0.0
+
             }
             
         });
         task.resume()
         
-        
+        print ("\nRetrieveData: Ended")
     }
+
     
     
     //Setup Screen refresh
     func refreshControlAction(refreshControl: UIRefreshControl) {
-        self.retrieveData()
-        refreshControl.endRefreshing()
         
-        print("\nScreen Refreshed")
+        NSLog("\nRefreshControlAction Called")
+        self.retrieveData(refreshControl: refreshControl)
+
+
     }
 
 
@@ -105,11 +156,17 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //Setup the data
         cell.theTitle.text = aMovie?["title"] as? String
         cell.theOverview.text = aMovie?["overview"] as? String
+        cell.theLanguage = aMovie?["original_language"] as? String
+        cell.theReleaseDate = aMovie?["release_date"] as? String
+        
         
         if let anImagePath = (aMovie?["backdrop_path"] as? String) {
-            let anImagePrePath = "https://image.tmdb.org/t/p/w185/"
+            let anImagePrePath = "https://image.tmdb.org/t/p/w185"
             let anImageFinalPath = anImagePrePath + anImagePath
             cell.theImage.setImageWith( URL(string: anImageFinalPath )!)
+            
+            //Setup the large backdrop image
+            cell.pathForBackdropImage = "https://image.tmdb.org/t/p/w780" + anImagePath
         }
         
         return cell
@@ -137,32 +194,39 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        NSLog("\nReturn Movie Count: \(theMovies?.count)")
+        print ("\nReturn Movie Count: \(theMovies?.count)")
         return  (theMovies?.count) ?? 0
 
         
     }    
 
 
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //Get rid of the gray bar
         self.tableView.deselectRow(at: indexPath, animated: true)
     }
     
+
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         
-        let destinationViewController = segue.destination as! MovieDetailViewController
-        
+        let dvc = segue.destination as! MovieDetailViewController
         let indexPath = tableView.indexPathForSelectedRow
-        
+    
         let aMovieCell = self.tableView.cellForRow(at: indexPath!) as? MovieCell
         
         print ("\n\nPrepare for seque: \(aMovieCell?.theImage.image)")
 
         
-        destinationViewController.image = aMovieCell?.theImage.image
+        //Passing content
+        dvc.aTitle = aMovieCell?.theTitle.text
+        dvc.anOverview = aMovieCell?.theOverview.text
+        dvc.aReleaseDate = aMovieCell?.theReleaseDate
+        dvc.aLanguage = aMovieCell?.theLanguage
+        //dvc.image = aMovieCell?.theImage.image
+        dvc.anImage = aMovieCell?.pathForBackdropImage
+        
     }
     
     override func didReceiveMemoryWarning() {

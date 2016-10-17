@@ -7,28 +7,56 @@
 //
 
 import UIKit
+import AFNetworking
 
 class MovieDetailViewController: UIViewController {
 
 
     @IBOutlet weak var theImage: UIImageView!
     @IBOutlet weak var theScrollView: UIScrollView!
-    @IBOutlet weak var theLabel: UILabel!
+    @IBOutlet weak var theSubView: UIView!
+    @IBOutlet weak var theTitle: UILabel!
+    @IBOutlet weak var theReleaseDate: UILabel!
+    @IBOutlet weak var theLanguage: UILabel!
+    @IBOutlet weak var theOverview: UILabel!
+
     
-    var image:UIImage?
+    //        cell.thePopularity.text = aMovie?["popularity"] as? String
+    //        cell.theOriginalLanguage.text = aMovie?["original_language"] as? String
+    //        cell.theReleaseDate.text = aMovie?["release_date"] as? String
+    
+    
+    var anImage:String?
+    var aTitle: String?
+    var anOverview:String?
+    var anPopularity:String?
+    var aLanguage:String?
+    var aReleaseDate:String?
+
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        theImage.image = image
+        if anImage != nil {
+            self.theImage.setImageWith( URL(string: anImage! )!)
+
+        }
+        theTitle.text = aTitle
+        theReleaseDate.text = aReleaseDate
+        theLanguage.text = aLanguage
+        theOverview.text = anOverview
         
         //Setup the Scroll area
-        theLabel.sizeToFit()
+        theTitle.sizeToFit()
+        theReleaseDate.sizeToFit()
+        theLanguage.sizeToFit()
+        theOverview.sizeToFit()
+        theSubView.sizeToFit()
         
         let contentWidth = theScrollView.bounds.width
-        let contentHeight = theLabel.bounds.height
+        let contentHeight = theSubView.bounds.height
         theScrollView.contentSize = CGSize(width: contentWidth, height: contentHeight)
     }
 

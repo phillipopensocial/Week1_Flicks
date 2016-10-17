@@ -14,6 +14,9 @@ class MovieCell: UITableViewCell {
     @IBOutlet weak var theTitle: UILabel!
     @IBOutlet weak var theOverview: UILabel!
 
+    var theReleaseDate:String?
+    var theLanguage:String?
+    var pathForBackdropImage:String?
     
     override func awakeFromNib() {
         super.awakeFromNib()
