@@ -28,7 +28,8 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 123
+        //tableView.estimatedRowHeight = 100
+        //tableView.rowHeight = UITableViewAutomaticDimension
 
         
         retrieveData()
@@ -142,7 +143,28 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
     }    
 
- 
+
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //Get rid of the gray bar
+        self.tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        
+        let destinationViewController = segue.destination as! MovieDetailViewController
+        
+        let indexPath = tableView.indexPathForSelectedRow
+        
+        let aMovieCell = self.tableView.cellForRow(at: indexPath!) as? MovieCell
+        
+        print ("\n\nPrepare for seque: \(aMovieCell?.theImage.image)")
+
+        
+        destinationViewController.image = aMovieCell?.theImage.image
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
