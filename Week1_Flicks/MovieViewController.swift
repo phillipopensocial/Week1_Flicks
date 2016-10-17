@@ -61,7 +61,7 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //let url = URL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&offset=\(offset)")
         let request = URLRequest(url: url!)
         let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = 1.0;
+        sessionConfig.timeoutIntervalForRequest = 10.0;
         let session = URLSession(
             configuration: sessionConfig,
             delegate:nil,

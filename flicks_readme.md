@@ -2,7 +2,7 @@
 
 Flicks is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
-Time spent: 13 hours spent in total
+Time spent: 15 hours spent in total
 
 ## User Stories
 
@@ -11,7 +11,7 @@ The following **required** functionality is completed:
 - [X] User can view a list of movies currently playing in theaters. Poster images load asynchronously.
 - [X] User can view movie details by tapping on a cell.
 - [X] User sees loading state while waiting for the API.
-- [ ] User sees an error message when there is a network error.
+- [X] (Seems like MBProgreeHUD is interferring )User sees an error message when there is a network error.
 - [X] User can pull to refresh the movie list.
 
 The following **optional** features are implemented:
@@ -33,7 +33,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://imgur.com/TxvHyha' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/TxvHyha.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
