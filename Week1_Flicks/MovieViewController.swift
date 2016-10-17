@@ -28,6 +28,9 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         //Hide the Network message view
         self.theNetworkMsgView.isHidden = true
+        self.theNetworkMsgView.isHidden = false
+        self.theNetworkMsgView.isHidden = true
+
 
         
         //Setup Refresh Control
@@ -61,7 +64,7 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //let url = URL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&offset=\(offset)")
         let request = URLRequest(url: url!)
         let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = 10.0;
+        sessionConfig.timeoutIntervalForRequest = 1.0;
         let session = URLSession(
             configuration: sessionConfig,
             delegate:nil,
@@ -120,10 +123,10 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 //Notify of error
                 print("\nsleep started")
                 progressHUD.hide(animated: true)
-                self.theNetworkMsgView.setNeedsFocusUpdate()
+                self.theNetworkMsgView.isHidden = false
                 sleep(3)
                 print("\nsleep ended")
-                self.theNetworkMsgView.alpha = 0.0
+                self.theNetworkMsgView.isHidden = true
 
             }
             
