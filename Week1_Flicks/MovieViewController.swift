@@ -29,7 +29,7 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //Hide the Network message view
         self.theNetworkMsgView.isHidden = true
         self.theNetworkMsgView.isHidden = false
-        self.theNetworkMsgView.isHidden = true
+  //      self.theNetworkMsgView.isHidden = true
 
 
         
