@@ -25,8 +25,8 @@ class MovieDetailViewController: UIViewController {
     //        cell.theOriginalLanguage.text = aMovie?["original_language"] as? String
     //        cell.theReleaseDate.text = aMovie?["release_date"] as? String
     
-    
-    var anImage:String?
+    var initImage:UIImage?
+    var anImagePath:String?
     var aTitle: String?
     var anOverview:String?
     var anPopularity:String?
@@ -39,10 +39,15 @@ class MovieDetailViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        if anImage != nil {
-            self.theImage.setImageWith( URL(string: anImage! )!)
-
+        self.theImage.image = initImage
+        
+       if anImagePath != nil {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
+            self.theImage.setImageWith( URL(string: self.anImagePath! )!)
+            })
+        
         }
+ 
         theTitle.text = aTitle
         theReleaseDate.text = aReleaseDate
         theLanguage.text = aLanguage

@@ -28,9 +28,6 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         //Hide the Network message view
         self.theNetworkMsgView.isHidden = true
-        self.theNetworkMsgView.isHidden = false
-  //      self.theNetworkMsgView.isHidden = true
-
 
         
         //Setup Refresh Control
@@ -64,7 +61,7 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         //let url = URL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&offset=\(offset)")
         let request = URLRequest(url: url!)
         let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = 1.0;
+        sessionConfig.timeoutIntervalForRequest = 2;  //Change time to cause network error
         let session = URLSession(
             configuration: sessionConfig,
             delegate:nil,
@@ -121,12 +118,19 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
             }else{
                 
                 //Notify of error
-                print("\nsleep started")
+            
                 progressHUD.hide(animated: true)
-                self.theNetworkMsgView.isHidden = false
-                sleep(3)
-                print("\nsleep ended")
-                self.theNetworkMsgView.isHidden = true
+                
+                //Display message now
+                DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                    self.theNetworkMsgView.isHidden = false
+                })
+
+                //Disengage message in 4 sec
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+                    self.theNetworkMsgView.isHidden = true
+                })
+
 
             }
             
@@ -155,6 +159,11 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         //Extract
         let aMovie = self.theMovies![indexPath.row ] as? NSDictionary
+        
+        //Setup the style
+        cell.selectionStyle = .gray
+        cell.setSelected(true, animated: true)
+        
         
         //Setup the data
         cell.theTitle.text = aMovie?["title"] as? String
@@ -227,8 +236,11 @@ class MovieViewController: UIViewController, UITableViewDelegate, UITableViewDat
         dvc.anOverview = aMovieCell?.theOverview.text
         dvc.aReleaseDate = aMovieCell?.theReleaseDate
         dvc.aLanguage = aMovieCell?.theLanguage
-        //dvc.image = aMovieCell?.theImage.image
-        dvc.anImage = aMovieCell?.pathForBackdropImage
+        
+        if let validImage = aMovieCell?.theImage.image{
+            dvc.initImage = validImage
+            dvc.anImagePath = aMovieCell?.pathForBackdropImage
+        }
         
     }
     
