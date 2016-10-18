@@ -11,7 +11,7 @@ The following **required** functionality is completed:
 - [X] User can view a list of movies currently playing in theaters. Poster images load asynchronously.
 - [X] User can view movie details by tapping on a cell.
 - [X] User sees loading state while waiting for the API.
-- [X] (Seems like MBProgreeHUD is interferring )User sees an error message when there is a network error.
+- [X] User sees an error message when there is a network error.
 - [X] User can pull to refresh the movie list.
 
 The following **optional** features are implemented:
@@ -20,8 +20,8 @@ The following **optional** features are implemented:
 - [ ] Implement segmented control to switch between list view and grid view.
 - [ ] Add a search bar.
 - [ ] All images fade in.
-- [ ] For the large poster, load the low-res image first, switch to high-res when complete.
-- [ ] Customize the highlight and selection effect of the cell.
+- [X] For the large poster, load the low-res image first, switch to high-res when complete.
+- [X] Customize the highlight and selection effect of the cell.
 - [ ] Customize the navigation bar.
 - [X] Add an Updated label in the screen to show last refreshed (My idea)
 
@@ -33,7 +33,8 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/TxvHyha.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/tAoviTs.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/M8o6Coq.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
